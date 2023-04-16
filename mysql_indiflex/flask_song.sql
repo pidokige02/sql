@@ -69,15 +69,29 @@ upfile varchar(128) not null,
 FOREIGN KEY(songno) REFERENCES Song(songno)
 );
 
+desc Myalbum;
+ALTER TABLE Myalbum MODIFY COLUMN upfile varchar(128);
+-- remove "not null" property from upfile
+ 
+select * from Myalbum;
 
 create table Mycom(
-id int unsigned not null auto_increment primary key,
-myalbumid int unsigned not null,
+id int auto_increment primary key,
+myalbumid int,
 writer int unsigned,
-content varchar(255),
-writedate DATETIME not null,
-FOREIGN KEY(writer) REFERENCES User(id) ON DELETE SET NULL
+content varchar(1023),
+writedate timestamp default current_timestamp,
+FOREIGN KEY(writer) REFERENCES User(id)
 );
+ALTER TABLE Mycom MODIFY COLUMN myalbumid int;
+ALTER TABLE Mycom MODIFY COLUMN content varchar(1023);
+ALTER TABLE Mycom MODIFY COLUMN writedate timestamp default current_timestamp;
+desc User;
+desc Mycom;
+insert into Mycom(myalbumid, writer, content) values (1, 5, "첫번째");
+insert into Mycom(myalbumid, writer, content) values (1, 5, "두번째");
+
+select * from Mycom;
 
 -- view 를 통하여 만들어질 table 다른 방법으로 만들었다 'v_sa_grp'
 create table SongInfo(
@@ -176,7 +190,12 @@ select sa.songno, sa.atype, group_concat(a.name) names
 select * from v_sa where songno='0000001';
 select * from v_sa;
 
+select * from Myalbum;
 
+select s.songno, s.genre, r.srank
+	from Song s inner join SongRank r on s.songno = r.songno
+    where r.rankdt = "2022-10-28" order by genre;
+    
 select 'abc', password('abc');
 select 'abc', sha2('abc', 256);
 
